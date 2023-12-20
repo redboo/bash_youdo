@@ -11,7 +11,8 @@ search_string=$1
 directory=$2
 
 # Цикл для обхода файлов и подкаталогов с использованием xargs
-find "$directory" -type f -print0 | while IFS= read -r -d '' file; do
+find "$directory" -type f -print0 | while IFS= read -d '' file; do
+
     # Проверяем доступ к файлу
     if [ -r "$file" ]; then
         # Поиск строки в файле
