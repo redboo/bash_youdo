@@ -10,21 +10,8 @@ fi
 search_string=$1
 directory=$2
 
-# Цикл для обхода файлов и подкаталогов с использованием xargs
-find "$directory" -type f -print0 | while IFS= read -d '' file; do
+# Используем grep для рекурсивного поиска и awk для форматирования вывода
+grep_result=$(grep -r -l "$search_string" "$directory" | awk '{size = system("du -h \""$0"\" | cut -f1"); print "Файл: " $0 ", Размер: " size}')
 
-    # Проверяем доступ к файлу
-    if [ -r "$file" ]; then
-        # Поиск строки в файле
-        grep_result=$(grep -q "$search_string" "$file" && echo "найдено" || echo "не найдено")
-
-        # Если строка найдена, выводим информацию на консоль
-        if [ "$grep_result" = "найдено" ]; then
-            size=$(du -h "$file" | cut -f1)
-            echo "Файл: $file, Размер: $size"
-        fi
-    else
-        # Выводим сообщение о недоступности файла
-        echo "Нет доступа к файлу: $file"
-    fi
-done
+# Выводим результат на консоль
+echo "$grep_result"
