@@ -9,12 +9,25 @@ fi
 # Переданный путь к каталогу
 directory=$1
 
-# Используем find с параметром -print0 и xargs с параметром -0 для обработки пробелов
-find "$directory" -type f -print0 | while IFS= read -r -d '' file; do
-    # Получаем размер и права доступа файла
-    size=$(du -h "$file" | cut -f1)
-    permissions=$(ls -l "$file" | awk '{print $1}')
+# Функция для рекурсивного обхода файлов и подкаталогов
+function process_files {
+    local current_directory="$1"
 
-    # Выводим информацию на консоль
-    echo "Файл: $file, Размер: $size, Права доступа: $permissions"
-done
+    for file in "$current_directory"/*; do
+        # Проверяем, является ли текущий элемент файлом
+        if [ -f "$file" ]; then
+            # Получаем размер и права доступа файла
+            size=$(du -h "$file" | cut -f1)
+            permissions=$(ls -l "$file" | awk '{print $1}')
+
+            # Выводим информацию на консоль
+            echo "Файл: $file, Размер: $size, Права доступа: $permissions"
+        elif [ -d "$file" ]; then
+            # Если текущий элемент - подкаталог, вызываем функцию для него
+            process_files "$file"
+        fi
+    done
+}
+
+# Вызываем функцию для начального каталога
+process_files "$directory"
