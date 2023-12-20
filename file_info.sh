@@ -10,10 +10,8 @@ fi
 directory=$1
 
 # Функция для рекурсивного обхода файлов и подкаталогов
-function process_files {
-    local current_directory="$1"
-
-    for file in "$current_directory"/*; do
+process_files() {
+    for file in "$1"/*; do
         # Проверяем, является ли текущий элемент файлом
         if [ -f "$file" ]; then
             # Получаем размер и права доступа файла
